@@ -19,4 +19,6 @@ If you want invsee ignore teams and work on all players, edit `tshock/InvSee.jso
 
 If a player has permission `tshock.admin` they will be able to view any player's inventory regardless of team
 
+***
+
 [Download InvSee.dll](https://github.com/onusai/tshock-invsee/raw/main/bin/Debug/net6.0/InvSee.dll)
