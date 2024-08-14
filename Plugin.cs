@@ -60,20 +60,15 @@ namespace InvSee
             if (!configData.CommandEnabled || args.Parameters.Count == 0) return;
 
             var cmdPlayer = args.Player;
+            bool showBanks = (args.Parameters.Count >= 2 && args.Parameters[1] == "banks");
 
             TSPlayer[] players;
             if (args.Parameters[0] == "all")
-            {
                 players = TShock.Players;
-            }
             else
-            {
                 players = TSPlayer.FindByNameOrID(args.Parameters[0]).ToArray();
-            }
 
             if (players.Length == 0) return;
-
-            
 
             foreach (TSPlayer player in players)
             {
@@ -82,55 +77,86 @@ namespace InvSee
                 if (!cmdPlayer.Group.HasPermission("tshock.admin") && configData.OnlyShowIfOnTeam && cmdPlayer.Team != player.Team)
                 {
                     if (args.Parameters[0] != "all")
-                        cmdPlayer.SendErrorMessage("Unable to use invsee on this player because you are on different teams");
+                        cmdPlayer.SendErrorMessage(String.Format("Unable to use invsee on player {0} because you are on different teams", player.Name));
                     continue;
                 }
 
-                var msg = "";
-
                 cmdPlayer.SendInfoMessage(player.Name + "'s Inventory -----------");
-
+                var msg = "";
                 int i = 0;
                 foreach (Item item in player.TPlayer.inventory)
                 {
                     if (item.type == 0) continue;
+                    i++;
 
                     msg += ChatItem(item.type, item.stack) + " ";
 
-                    i++;
-                    if (i == 10)
-                    {
-                        cmdPlayer.SendInfoMessage(msg);
-                        msg = "";
-                        i = 0;
-                    }
+                    if (i != 0 && i % 10 == 0)
+                        msg += "\n";        
                 }
-                if (msg != "") cmdPlayer.SendInfoMessage(msg);
+                if (msg != "")
+                    cmdPlayer.SendInfoMessage(msg);
+
+                List<int> equipIds = new List<int>();
 
                 msg = "";
-                i = 0;
-                foreach (Item item in player.TPlayer.armor)
+                for (i = 0; i <= 2; i++)
                 {
-                    if (item.type != 0)
-                        msg += ChatItem(item.type, item.stack) + " ";
+                    Item item = player.TPlayer.armor[i];
+                    if (item.type == 0) continue;
+                    equipIds.Add(item.type);
 
-                    i++;
-                    if (i == 9)
-                    {
-                        cmdPlayer.SendInfoMessage("Equiped: " + msg);
-                        msg = "";
-                    }
+                    msg += ChatItem(item.type, item.stack) + " ";
                 }
-                cmdPlayer.SendInfoMessage("Vanity:" + msg);
 
-
-                msg = "";
-                foreach (Item item in player.TPlayer.miscEquips)
+                foreach (Item item in player.Accessories)
                 {
                     if (item.type == 0) continue;
+                    equipIds.Add(item.type);
+
                     msg += ChatItem(item.type, item.stack) + " ";
                 }
-                cmdPlayer.SendInfoMessage("Misc: " + msg);
+                if (msg != "")
+                    cmdPlayer.SendInfoMessage("Equiped: " + msg);
+
+                msg = "";
+                foreach (Item item in player.TPlayer.armor)
+                {
+                    if (item.type == 0 || equipIds.Contains(item.type)) continue;
+                    msg += ChatItem(item.type, item.stack) + " ";
+                }
+                if (msg != "")
+                    cmdPlayer.SendInfoMessage("Vanity: " + msg);
+
+                if (!showBanks) continue;
+
+                Dictionary<string, Item[]> banks = new Dictionary<string, Item[]>()
+                {
+                    { "Piggy", player.TPlayer.bank.item},
+                    { "Safe", player.TPlayer.bank2.item},
+                    { "Forge", player.TPlayer.bank3.item},
+                    { "Void", player.TPlayer.bank4.item},
+                };
+
+                foreach (var entry in banks)
+                {
+                    msg = "";
+                    i = 0;
+                    foreach (Item item in entry.Value)
+                    {
+                        if (item.type == 0) continue;
+                        i++;
+
+                        msg += ChatItem(item.type, item.stack) + " ";
+
+                        if (i != 0 && i % 10 == 0)
+                            msg += "\n";
+                    }
+
+                    if (msg == "") continue;
+
+                    cmdPlayer.SendInfoMessage(String.Format("{0}:\n{1}", entry.Key, msg));
+                }
             }
         }
 
