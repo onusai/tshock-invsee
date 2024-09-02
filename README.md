@@ -11,6 +11,8 @@ For example, to view inventory of a player named onusai you can type `/invsee on
 
 To view all players inventory use `/invsee all` 
 
+To also see items in banks, add `banks` as the end of the command `/ivnsee onusai banks` or `/invsee all banks`
+
 ***
 
 By default /invsee will only work on players on your team
