@@ -11,7 +11,7 @@ For example, to view inventory of a player named onusai you can type `/invsee on
 
 To view all players inventory use `/invsee all` 
 
-To also see items in banks, add `banks` as the end of the command `/ivnsee onusai banks` or `/invsee all banks`
+To also see items in banks, add `banks` as the end of the command `/invsee onusai banks` or `/invsee all banks`
 
 ***
 
