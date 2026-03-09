@@ -23,4 +23,4 @@ If a player has permission `tshock.admin` they will be able to view any player's
 
 ***
 
-[Download InvSee.dll](https://github.com/onusai/tshock-invsee/raw/main/bin/Debug/net6.0/InvSee.dll)
+[Download InvSee.dll](https://github.com/onusai/tshock-invsee/raw/main/bin/Debug/net9.0/InvSee.dll)
